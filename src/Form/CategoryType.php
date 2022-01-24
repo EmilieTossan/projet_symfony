@@ -13,7 +13,10 @@ class CategoryType extends AbstractType
     {
         $builder
             ->add('name')
-        ;
+            ->add('image', FileType::class, [
+                'mapped' => false
+            ])
+            ->add('Enregistrer', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
