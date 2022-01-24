@@ -22,9 +22,11 @@ class Product
     private $price;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(onDelete:"CASCADE")]
     private $category;
 
     #[ORM\ManyToOne(targetEntity: Licence::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(onDelete:"CASCADE")]
     private $licence;
 
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: Image::class)]

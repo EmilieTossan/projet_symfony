@@ -23,6 +23,7 @@ class Image
     private $title;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images')]
+    #[ORM\JoinColumn(onDelete:"CASCADE")]
     private $product;
 
     public function getId(): ?int
