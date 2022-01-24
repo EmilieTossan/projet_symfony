@@ -3,10 +3,13 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AdminCategoryController extends AbstractController
 {
@@ -33,13 +36,27 @@ class AdminCategoryController extends AbstractController
      */
     public function adminCreateCategory(
         Request $request,
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        SluggerInterface $sluggerInterface
     ){
         $category = new Category();
         $categoryForm = $this->createForm(CategoryType::class, $category);
         $categoryForm->handleRequest($request);
 
         if($categoryForm->isSubmitted() && $categoryForm->isValid()){
+            $imageFile = $categoryForm->get('image')->getData();
+
+            if($imageFile){
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $sluggerInterface->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $imageFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+                $category->setImage($newFilename);
+            }
+
             $entityManagerInterface->persist($category);
             $entityManagerInterface->flush();
             return $this->redirectToRoute('admin_category_list');

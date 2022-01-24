@@ -1,0 +1,10 @@
+{% extends "front/base.html.twig" %}
+
+{% block main %}
+
+    {% for category in categories %}
+        <img src="{{ asset('media/' ~ category.image) }}" alt="{{ category.name }}">
+        <h2><a href="{{ path ("category_show", {'id' : category.id })}}">{{ category.name }}</a></h2>
+    {% endfor %}
+
+{% endblock %}
