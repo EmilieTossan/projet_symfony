@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\LicenceRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Product;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LicenceRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
@@ -20,6 +21,9 @@ class Licence
 
     #[ORM\OneToMany(mappedBy: 'licence', targetEntity: Product::class)]
     private $products;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $image;
 
     public function __construct()
     {
@@ -69,6 +73,18 @@ class Licence
                 $product->setLicence(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }
