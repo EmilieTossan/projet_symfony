@@ -47,7 +47,7 @@ class UserController extends AbstractController
                 ->from('admin@test.com')
                 ->to($user_email)
                 ->subject('Inscription')
-                ->htmlTemplate('front/emailregister.html.twig')
+                ->htmlTemplate('registration/register_email.html.twig')
                 ->context([
                     'name' => $user_name,
                     'firstname' => $user_firstname
