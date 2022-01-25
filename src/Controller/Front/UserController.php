@@ -30,6 +30,7 @@ class UserController extends AbstractController
 
         if($userForm->isSubmitted() && $userForm->isValid()){
             $user->setRoles(["ROLE_USER"]);
+            $user->setDate(new \DateTime("NOW"));
 
             $user_email = $userForm->get('email')->getData();
             $user_name = $userForm->get('name')->getData();
