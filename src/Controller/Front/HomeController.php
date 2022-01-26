@@ -6,7 +6,7 @@ use App\Repository\CategoryRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class  HomeController extends AbstractController
+class HomeController extends AbstractController
 {
     /**
      * @Route("home", name="front_home")
@@ -19,7 +19,7 @@ class  HomeController extends AbstractController
         if($category){
             return $this->render('front/home.html.twig', ['category' => $category]);
         } else {
-            return $this->redirectToRoute('front_home');
+            return $this->render('front/home.html.twig');
         }
     }
 }

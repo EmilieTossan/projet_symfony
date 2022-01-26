@@ -44,7 +44,37 @@
     <h2>{{ app.user.address }}</h2>
     <h2>{{ app.user.zipcode }} {{ app.user.city }}</h2>
 
-    <a href="{{ path('user_update') }}">Modifier votre compte</a>
+    <a href="{{ path('update_user') }}">Modifier votre compte</a>
+    <a href="{{ path('delete_user') }}">Supprimer votre compte</a>
+
+    {% endif %}
+
+    {% if app.user is null %}
+    
+    <a href="{{ path('register')}}">Créer votre compte</a>
+
+    {% endif %}
+
+    {% if app.user %}
+    
+    {% if app.user.comments %}
+
+    <hr>
+
+    <h2>Commentaires de {{ app.user.firstname }} {{ app.user.name }}</h2>
+
+    {% for comment in app.user.comments %}
+    
+    <h4>Commentaires sur {{ comment.product.name}}</h4>
+    <h4>Le {{ comment.date | date('d/m/Y') }}</h4>
+    <p>{{ comment.content }}</p>
+
+    <a href="{{ path('update_comment', {'id' : comment.id}) }}">Modifier votre commentaire</a>
+    <a href="{{ path('delete_comment', {'id' : comment.id}) }}">Supprimer votre commentaire</a>
+
+    {% endfor %}
+
+    {% endif %}
 
     {% endif %}
 

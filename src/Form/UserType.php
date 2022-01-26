@@ -20,9 +20,9 @@ class UserType extends AbstractType
             ])
             ->add('name')
             ->add('firstname')
-            ->add('city')
             ->add('address')
             ->add('zipcode')
+            ->add('city')
             ->add('Inscription', SubmitType::class);
         ;
     }
