@@ -31,6 +31,16 @@ class AdminProductController extends AbstractController
     }
 
     /**
+     * @Route("admin/search", name="admin_search")
+     */
+    public function adminSearch(Request $request, ProductRepository $productRepository)
+    {
+        $term = $request->query->get('term');
+        $products = $productRepository->searchByTerm($term);
+        return $this->render('admin/search.html.twig', ['products' => $products, 'term' => $term]);
+    }
+
+    /**
      * @Route("admin/create/product", name="admin_create_product")
      */
     public function adminCreateProduct(

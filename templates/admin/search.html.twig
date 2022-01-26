@@ -1,0 +1,14 @@
+{% extends "admin/base.html.twig" %}
+
+{% block main %}
+
+<p>Résultats de la recherche "{{ term }}" :</p>
+
+{% for product in products %}
+
+<img src="{{ asset('media/' ~ product.image[0].src) }}" alt="{{ product.image[0].alt }}">
+<p><a href="{{ path ("product_show", {'id' : product.id })}}">{{ product.name }} {{ product.price }} €</a></p>
+
+{% endfor %}
+
+{% endblock %}

@@ -52,4 +52,14 @@ class ProductController extends AbstractController
             'commentForm' => $commentForm->createView()
         ]);
     }
+
+    /**
+     * @Route("search", name="front_search")
+     */
+    public function frontSearch(Request $request, ProductRepository $productRepository)
+    {
+        $term = $request->query->get('term');
+        $products = $productRepository->searchByTerm($term);
+        return $this->render('front/search.html.twig', ['products' => $products, 'term' => $term]);
+    }
 }

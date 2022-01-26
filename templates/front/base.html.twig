@@ -10,6 +10,13 @@
 </head>
 <body>
 
+    <form action="{{ path('front_search')}}" method="get">
+    
+        <input type="search" name="term">
+        <input type="submit" value="Rechercher">
+    
+    </form>
+
     {% block main %}{% endblock %}
     
 </body>

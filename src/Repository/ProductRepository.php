@@ -19,6 +19,23 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    function searchByTerm($term){
+        $queryBuilder = $this->createQueryBuilder('product');
+        $query = $queryBuilder
+            ->select('product')
+            ->leftJoin('product.category', 'category')
+            ->leftJoin('product.licence', 'licence')
+            ->where('product.name LIKE :term')
+            ->orwhere('product.category.name LIKE :term')
+            ->orwhere('product.category.description LIKE :term')
+            ->orwhere('product.licence.name LIKE :term')
+            ->orwhere('product.licence.description LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
     // /**
     //  * @return Product[] Returns an array of Product objects
     //  */
