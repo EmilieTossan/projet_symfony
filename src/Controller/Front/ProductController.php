@@ -2,8 +2,12 @@
 
 namespace App\Controller\Front;
 
+use App\Entity\Like;
 use App\Entity\Comment;
+use App\Entity\Dislike;
+use App\Repository\LikeRepository;
 use App\Repository\UserRepository;
+use App\Repository\DislikeRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,5 +65,97 @@ class ProductController extends AbstractController
         $term = $request->query->get('term');
         $products = $productRepository->searchByTerm($term);
         return $this->render('front/search.html.twig', ['products' => $products, 'term' => $term]);
+    }
+
+    /**
+     * @Route("like/product/{id}", name="product_like")
+     */
+    public function likeProduct(
+        $id,
+        ProductRepository $productRepository,
+        LikeRepository $likeRepository,
+        DislikeRepository $dislikeRepository,
+        EntityManagerInterface $entityManagerInterface
+    ){
+        $product = $productRepository->find($id);
+        $user = $this->getUser();
+
+        if ($product->isLikedByUser($user)) {
+            $like = $likeRepository->findOneBy([
+                'product' => $product,
+                'user' => $user
+            ]);
+            $entityManagerInterface->remove($like);
+            $entityManagerInterface->flush();
+        }
+
+        if ($product->isDislikedByUser($user)) {
+            $dislike = $dislikeRepository->findOneBy([
+                'product' => $product,
+                'user' => $user
+            ]);
+            $entityManagerInterface->remove($dislike);
+
+            $like = new Like();
+
+            $like->setProduct($product);
+            $like->setUser($user);
+
+            $entityManagerInterface->persist($like);
+            $entityManagerInterface->flush();
+        }
+
+        $like = new Like();
+        $like->setProduct($product);
+        $like->setUser($user);
+
+        $entityManagerInterface->persist($like);
+        $entityManagerInterface->flush();
+    }
+
+    /**
+     * @Route("dislike/product/{id}", name="product_dislike")
+     */
+    public function dislikeProduct(
+        $id,
+        ProductRepository $productRepository,
+        LikeRepository $likeRepository,
+        DislikeRepository $dislikeRepository,
+        EntityManagerInterface $entityManagerInterface
+    ){
+        $product = $productRepository->find($id);
+        $user = $this->getUser();
+
+        if ($product->isDislikedByUser($user)) {
+            $dislike = $dislikeRepository->findOneBy([
+                'product' => $product,
+                'user' => $user
+            ]);
+            $entityManagerInterface->remove($dislike);
+            $entityManagerInterface->flush();
+        }
+
+        if ($product->isLikedByUser($user)) {
+            $like = $likeRepository->findOneBy([
+                'product' => $product,
+                'user' => $user
+            ]);
+            $entityManagerInterface->remove($like);
+
+            $dislike = new Dislike();
+
+            $dislike->setProduct($product);
+            $dislike->setUser($user);
+
+            $entityManagerInterface->persist($dislike);
+            $entityManagerInterface->flush();
+        }
+
+        $dislike = new Dislike();
+        $dislike->setProduct($product);
+        $dislike->setUser($user);
+
+        $entityManagerInterface->persist($dislike);
+        $entityManagerInterface->flush();
     }
 }

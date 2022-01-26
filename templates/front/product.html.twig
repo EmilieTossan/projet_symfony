@@ -18,6 +18,48 @@
     <h4>Le : {{ comment.date | date('d/m/Y')}}</h4>
     <p>{{ comment.content }}</p>
 
+    {% if user.app %}
+    
+    <a href="{{ path('product_like', {'id' : product.id}) }}" class="btn btn-link js-likes">
+
+    <span class="js-likes">{{ product.likes | length }}</span>
+
+    {% if app.user and car.isLikedByUser(app.user) %}
+
+        <i class="fas fa-thumbs-up"></i>
+
+    {% else %}
+
+        <i class="far fa-thumbs-up"></i>
+
+    {% endif %}
+
+    <span class="js-label">J'aime</span>
+
+    {% endif %}
+
+    </a>
+
+    <a href="{{ path('product_dislike', {'id' : product.id}) }}" class="btn btn-link js-dislikes">
+
+    <span class="js-dislikes">{{ product.dislikes | length }}</span>
+
+    {% if app.user and car.isDislikedByUser(app.user) %}
+
+        <i class="fas fa-thumbs-down"></i>
+
+    {% else %}
+
+        <i class="far fa-thumbs-down"></i>
+
+    {% endif %}
+
+    <span class="js-label">Je n'aime pas</span>
+
+    {% endif %}
+
+    </a>
+
     {% if app.user is same as(comment.user) %}
     
     <a href="{{ path('update_comment', {'id' : comment.id}) }}">Modifier votre commentaire</a>
@@ -42,5 +84,92 @@
     <h4>Vous devez vous connecter pour ajouter un commentaire.</h4>
 
     {% endif %}
+
+{% endblock %}
+
+{% block js %}
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+    function onClickLike(event) {
+        event.preventDefault();
+        const url = $this.href;
+        const spanCount = this.querySelector('span.js-likes');
+        const icone = this.querySelector('i');
+        axios.get(url).then(function (response) {
+            spanCount.textContent = response.data.likes;
+            if (icone.classList.contains('fas')) {
+                icone.classList.replace('fas', 'far')                
+            } else {
+                icone.classList.replace('far', 'fas')
+            }
+        
+            if(response.data.message == "Dislike supprimé et like ajouté.")
+            {
+                const spanCountDislike = this.querySelector('span.js-dislikes');
+                const iconeDislike = this.querySelector('i.fa-thumbs-down');
+
+                spanCountDislike.textContent = response.data.dislikes;
+
+                if (iconeDislike.classList.contains('far')) {
+                    iconeDislike.classList.replace('far', 'fas')
+                } else {
+                    iconeDislike.classList.replace('fas', 'far')
+                }
+            }
+
+        }).catch(function(error)) {
+            if (error.response.status === 403) {
+                window.alert("Vous devez vous connecter.")
+            } else {
+                window.alert("Une erreur s'est produite.")
+            }
+        })
+    }
+
+    function onClickDislike(event) {
+        event.preventDefault();
+
+        const urlDis = this.href;
+        const spanCountDis = this.querySelector('span.js-dislikes');
+        const iconeDis = this.querySelector('i');
+
+        axios.get(urlDis).then(function(response) {
+            spanCountDis.textContent = response.data.dislikes;
+            if (iconeDis.classList.contains('fas')) {
+                iconeDis.classList.replace('fas', 'far');
+            } else {
+                iconeDis.classList.replace('far', 'fas');
+            }
+            
+            if (response.data.message == "Like supprimé et dislike ajouté") {
+                const spanCountLike = document.querySelector('span.js-likes');
+                const iconeLike = document.querySelector('i.fa-thumbs-up');
+
+                spanCountLike.textContent = response.data.likes;
+
+                if (iconeLike.classList.contains('fas')) {
+                    iconeLike.classList.replace('fas', 'far');
+                } else {
+                    iconeLike.classList.replace('far', 'fas');
+                }
+            }
+            
+        }).catch(function (error) {
+            if (error.response.status === 403){
+                window.alert("Vous devez vous connecter.");
+            } else {
+                window.alert("Une erreur s'est produite.");
+            }
+        })
+    }
+
+    document.querySelector('a.js-likes').addEventListener('click', onClickLike);
+
+    document.querySelector('a.js-dislikes').addEventListener('click', onClickDislike);
+
+</script>
 
 {% endblock %}
