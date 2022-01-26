@@ -17,6 +17,14 @@
     
     </form>
 
+    {% for gcategory in gcategories.getAll %}
+        <a href="{{ path('show_category', {'id' : gcategory.id }) }}">{{gcategory.name}}</a>
+    {% endfor %}
+
+    {% for glicence in glicences.getAll %}
+        <a href="{{ path('show_licence', {'id' : glicence.id }) }}">{{glicence.name}}</a>
+    {% endfor %}
+
     {% block main %}{% endblock %}
 
     {% block js %}{% endblock %}

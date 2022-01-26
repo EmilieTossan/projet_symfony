@@ -10,12 +10,42 @@
 </head>
 <body>
 
-    <form action="{{ path('front_search')}}" method="get">
-    
-        <input type="search" name="term">
-        <input type="submit" value="Rechercher">
-    
-    </form>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand link-danger mb-0 h1 ms-3" href="#"><span class="text-danger">Vente de produits dérivés</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fs-5" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Catégories
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for gcategory in gcategories.getAll %}
+                            <li><a class="dropdown-item" href="{{ path('show_category', {'id' : gcategory.id }) }}">{{ gcategory.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fs-5" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Licences
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for glicence in glicences.getAll %}
+                            <li><a class="dropdown-item" href="{{ path('show_licence', {'id' : glicence.id }) }}">{{ glicence.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+            <form class="d-flex" action="{{ path('front_search')}}" method="get">
+                <input class="form-control me-2 fs-5 fw-light" type="search" name="term" placeholder="Produit, catégorie, licence..." aria-label="Search">
+                <button class="btn btn-outline-success fs-5" type="submit">Rechercher</button>
+            </form>
+            </div>
+        </div>
+    </nav>
 
     {% block main %}{% endblock %}
 
