@@ -1,10 +1,10 @@
-{% extends "front/base.html.twig" %}
+{% extends "admin/base.html.twig" %}
 
 {% block main %}
 
     {% for product in products %}
         <img src="{{ asset('images/' ~ product.images[0].src) }}" alt="{{ product.images[0].alt }}" title="{{ product.images[0].title }}">
-        <h2><a href="{{ path ("show_product", {'id' : product.id })}}">{{ product.name }}</a></h2>
+        <h2><a href="{{ path ("admin_show_product", {'id' : product.id })}}">{{ product.name }}</a></h2>
         <h3>{{ product.price }} €</h3>
     {% endfor %}
 

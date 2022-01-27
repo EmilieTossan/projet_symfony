@@ -8,6 +8,7 @@ use App\Repository\LicenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminLicenceController extends AbstractController
@@ -35,13 +36,27 @@ class AdminLicenceController extends AbstractController
      */
     public function adminCreateLicence(
         Request $request,
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        SluggerInterface $sluggerInterface
     ){
         $licence = new Licence();
         $licenceForm = $this->createForm(LicenceType::class, $licence);
         $licenceForm->handleRequest($request);
 
         if($licenceForm->isSubmitted() && $licenceForm->isValid()){
+            $imageFile = $licenceForm->get('image')->getData();
+
+            if($imageFile){
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $sluggerInterface->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $imageFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+                $licence->setImage($newFilename);
+            }
+
             $entityManagerInterface->persist($licence);
             $entityManagerInterface->flush();
             return $this->redirectToRoute('admin_licence_list');
@@ -56,13 +71,27 @@ class AdminLicenceController extends AbstractController
         $id,
         Request $request,
         LicenceRepository $licenceRepository,
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        SluggerInterface $sluggerInterface
     ){
         $licence = $licenceRepository->find($id);
         $licenceForm = $this->createForm(LicenceType::class, $licence);
         $licenceForm->handleRequest($request);
 
         if($licenceForm->isSubmitted() && $licenceForm->isValid()){
+            $imageFile = $licenceForm->get('image')->getData();
+
+            if($imageFile){
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $sluggerInterface->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $imageFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+                $licence->setImage($newFilename);
+            }
+
             $entityManagerInterface->persist($licence);
             $entityManagerInterface->flush();
             return $this->redirectToRoute('admin_licence_list');

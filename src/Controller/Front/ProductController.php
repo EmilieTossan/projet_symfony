@@ -5,6 +5,7 @@ namespace App\Controller\Front;
 use App\Entity\Like;
 use App\Entity\Comment;
 use App\Entity\Dislike;
+use App\Form\CommentType;
 use App\Repository\LikeRepository;
 use App\Repository\UserRepository;
 use App\Repository\DislikeRepository;
@@ -37,7 +38,7 @@ class ProductController extends AbstractController
     {
         $product = $productRepository->find($id);
         $comment = new Comment();
-        $commentForm = $$this->createForm(CommentType::class, $comment);
+        $commentForm = $this->createForm(CommentType::class, $comment);
         $commentForm->handleRequest($request);
         
         if($commentForm->isSubmitted() && $commentForm->isValid()){

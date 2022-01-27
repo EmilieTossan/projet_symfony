@@ -13,7 +13,7 @@ class HomeController extends AbstractController
      */
     public function home(CategoryRepository $categoryRepository)
     {
-        $id = rand(1,50);
+        $id = rand(0,3);
         $category = $categoryRepository->find($id);
 
         if($category){

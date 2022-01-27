@@ -1,10 +1,10 @@
-{% extends "front/base.html.twig" %}
+{% extends "admin/base.html.twig" %}
 
 {% block main %}
 
     {% for licence in licences %}
         <img src="{{ asset('images/' ~ licence.image) }}" alt="{{ licence.name }}">
-        <h2><a href="{{ path ("show_licence", {'id' : licence.id })}}">{{ licence.name }}</a></h2>
+        <h2><a href="{{ path ("admin_show_licence", {'id' : licence.id })}}">{{ licence.name }}</a></h2>
     {% endfor %}
 
 {% endblock %}

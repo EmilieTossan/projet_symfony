@@ -25,6 +25,9 @@ class Licence
     #[ORM\Column(type: 'string', length: 255)]
     private $image;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $description;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -85,6 +88,18 @@ class Licence
     public function setImage(string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

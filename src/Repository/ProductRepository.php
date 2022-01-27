@@ -26,10 +26,10 @@ class ProductRepository extends ServiceEntityRepository
             ->leftJoin('product.category', 'category')
             ->leftJoin('product.licence', 'licence')
             ->where('product.name LIKE :term')
-            ->orwhere('product.category.name LIKE :term')
-            ->orwhere('product.category.description LIKE :term')
-            ->orwhere('product.licence.name LIKE :term')
-            ->orwhere('product.licence.description LIKE :term')
+            ->orwhere('category.name LIKE :term')
+            ->orwhere('category.description LIKE :term')
+            ->orwhere('licence.name LIKE :term')
+            ->orwhere('licence.description LIKE :term')
             ->setParameter('term', '%' . $term . '%')
             ->getQuery();
 

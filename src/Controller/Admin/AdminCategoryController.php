@@ -71,13 +71,27 @@ class AdminCategoryController extends AbstractController
         $id,
         Request $request,
         CategoryRepository $categoryRepository,
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        SluggerInterface $sluggerInterface
     ){
         $category = $categoryRepository->find($id);
         $categoryForm = $this->createForm(CategoryType::class, $category);
         $categoryForm->handleRequest($request);
 
         if($categoryForm->isSubmitted() && $categoryForm->isValid()){
+            $imageFile = $categoryForm->get('image')->getData();
+
+            if($imageFile){
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $sluggerInterface->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $imageFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+                $category->setImage($newFilename);
+            }
+            
             $entityManagerInterface->persist($category);
             $entityManagerInterface->flush();
             return $this->redirectToRoute('admin_category_list');
