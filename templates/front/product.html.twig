@@ -29,6 +29,9 @@
     </div>
 
     <h2>{{ product.name }} {{ product.price }} €</h2>
+
+    <a href="{{ path('add_cart', {'id' : product.id}) }}">Ajouter au panier</a>
+
     <h3>{{ product.category.name }}</h3>
     <h3>{{ product.licence.name }}</h3>
 
