@@ -2,6 +2,8 @@
 
 namespace App\Controller\Front;
 
+use DateTime;
+use App\Entity\Cart;
 use App\Entity\Command;
 use Symfony\Component\Mime\Email;
 use App\Repository\UserRepository;
@@ -21,14 +23,14 @@ class CommandController extends AbstractController
      */
     public function addCart($id, SessionInterface $sessionInterface)
     {
-        $cart = $sessionInterface->get('cart', []);
+        $cart_session = $sessionInterface->get('cart', []);
         if(!empty($cart[$id])){
-            $cart[$id]++;
+            $cart_session[$id]++;
         } else {
-            $cart[$id] = 1;
+            $cart_session[$id] = 1;
         }
 
-        $sessionInterface->set('cart', $cart);
+        $sessionInterface->set('cart_session', $cart_session);
 
         return $this->redirectToRoute('show_product', ['id' => $id]);
     }
@@ -38,13 +40,13 @@ class CommandController extends AbstractController
      */
     public function showCart(SessionInterface $sessionInterface, ProductRepository $productRepository)
     {
-        $cart = $sessionInterface->get('cart', []);
+        $cart_session = $sessionInterface->get('cart_session', []);
         $cartWithData = [];
 
-        foreach($cart as $id => $quantity){
+        foreach($cart_session as $id => $quantity){
             $cartWithData[] = [
                 'product' => $productRepository->find($id),
-                'questity' => $quantity
+                'quantity' => $quantity
             ];
         }
 
@@ -56,15 +58,15 @@ class CommandController extends AbstractController
      */
     public function deleteCart($id, SessionInterface $sessionInterface)
     {
-        $cart = $sessionInterface->get('cart', []);
+        $cart_session = $sessionInterface->get('cart_session', []);
 
-        if(!empty($cart[$id] && $cart[$id] == 1)) {
+        if(!empty($cart_session[$id] && $cart_session[$id] == 1)) {
             unset($cart[$id]);
         } else {
-            $cart[$id]--;
+            $cart_session[$id]--;
         }
 
-        $sessionInterface->set('cart', $cart);
+        $sessionInterface->set('cart_session', $cart_session);
 
         return $this->redirectToRoute('show_cart');
     }
@@ -106,22 +108,32 @@ class CommandController extends AbstractController
         $command->setNumber("Command-" . $command_number);
         $command->setDate(new \DateTime("NOW"));
 
-        $cart = $sessionInterface->get('cart', []);
+        $cart_session = $sessionInterface->get('cart_session', []);
         $price = 0;
 
-        foreach ($cart as $id_product => $quantity) {
+        $command->setPrice($price);
+        $entityManagerInterface->persist($command);
+        $entityManagerInterface->flush();
 
+        foreach ($cart_session as $id_product => $quantity) {
+
+            $cart = new Cart();
             $product = $productRepository->find($id_product);
-            $price_product = $$product->getPrice();
+            $price_product = $product->getPrice();
             $price = $price + ($price_product * $quantity);
             $product_stock = $product->getStock();
             $product_stock_final = $product_stock - $quantity;
             $product->setStock($product_stock_final);
-            $command->addProduct($product);
+            //$command->addProduct($product);
+            $cart->setProduct($product);
+            $cart->setQuantity($quantity);
+            $cart->setPrice($price_product);
+            $cart->setCommand($command);
             $entityManagerInterface->persist($product);
+            $entityManagerInterface->persist($cart);
             $entityManagerInterface->flush();
-            unset($cart[$id_product]);
-            $sessionInterface->set('cart', $cart);
+            unset($cart_session[$id_product]);
+            $sessionInterface->set('cart_session', $cart_session);
             
         }
 

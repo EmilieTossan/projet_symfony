@@ -3,11 +3,13 @@
 {% block main %}
 
 <form action="{{ path('command_create') }}" method="post">
+
 <input type="text" name="name" placeholder="Nom" {% if user %} value="{{ app.user.firstname }} {{ app.user.name }}" {% endif %}>
 <input type="text" name="email" placeholder="E-mail" {% if user %} value="{{ app.user.email }}" {% endif %}>
 <input type="text" name="address" placeholder="Adresse" {% if user %} value="{{ app.user.address }}" {% endif %}>
 <input type="text" name="zipcode" placeholder="Code postal" {% if user %} value="{{ app.user.zipcode }}" {% endif %}>
 <input type="text" name="city" placeholder="Ville" {% if user %} value="{{ app.user.city }}" {% endif %}>
+
 <input type="submit" value="Confirmer">
 
 </form>

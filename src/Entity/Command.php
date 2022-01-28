@@ -42,12 +42,12 @@ class Command
     #[ORM\Column(type: 'float')]
     private $price;
 
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'commands')]
-    private $products;
+    #[ORM\OneToMany(mappedBy: 'command', targetEntity: Cart::class)]
+    private $carts;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->carts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,25 +164,31 @@ class Command
     }
 
     /**
-     * @return Collection|Product[]
+     * @return Collection|Cart[]
      */
-    public function getProducts(): Collection
+    public function getCarts(): Collection
     {
-        return $this->products;
+        return $this->carts;
     }
 
-    public function addProduct(Product $product): self
+    public function addCart(Cart $cart): self
     {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
+        if (!$this->carts->contains($cart)) {
+            $this->carts[] = $cart;
+            $cart->setCommand($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(Product $product): self
+    public function removeCart(Cart $cart): self
     {
-        $this->products->removeElement($product);
+        if ($this->carts->removeElement($cart)) {
+            // set the owning side to null (unless already changed)
+            if ($cart->getCommand() === $this) {
+                $cart->setCommand(null);
+            }
+        }
 
         return $this;
     }
